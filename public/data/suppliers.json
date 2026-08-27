@@ -1,0 +1,424 @@
+{
+ "suppliers": [
+  {
+   "id": "A01",
+   "name": "华信精密",
+   "category": "结构件",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.82,
+    "profitImpact": 0.88
+   },
+   "scores": {
+    "quality": 92,
+    "delivery": 94,
+    "price": 88,
+    "service": 90
+   },
+   "tcoFactors": {
+    "transportRate": 0.068,
+    "qualityLossRate": 0.039,
+    "adminRate": 0.028
+   }
+  },
+  {
+   "id": "A02",
+   "name": "恒达五金",
+   "category": "五金标准件",
+   "region": "华南",
+   "kraljic": {
+    "supplyRisk": 0.18,
+    "profitImpact": 0.25
+   },
+   "scores": {
+    "quality": 85,
+    "delivery": 90,
+    "price": 93,
+    "service": 87
+   },
+   "tcoFactors": {
+    "transportRate": 0.043,
+    "qualityLossRate": 0.085,
+    "adminRate": 0.04
+   }
+  },
+  {
+   "id": "A03",
+   "name": "蓝海智造",
+   "category": "结构件",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.35,
+    "profitImpact": 0.55
+   },
+   "scores": {
+    "quality": 62,
+    "delivery": 71,
+    "price": 96,
+    "service": 65
+   },
+   "tcoFactors": {
+    "transportRate": 0.18,
+    "qualityLossRate": 0.42,
+    "adminRate": 0.05
+   }
+  },
+  {
+   "id": "A04",
+   "name": "泰隆化工",
+   "category": "化工原料",
+   "region": "华北",
+   "kraljic": {
+    "supplyRisk": 0.55,
+    "profitImpact": 0.48
+   },
+   "scores": {
+    "quality": 84,
+    "delivery": 82,
+    "price": 86,
+    "service": 80
+   },
+   "tcoFactors": {
+    "transportRate": 0.032,
+    "qualityLossRate": 0.073,
+    "adminRate": 0.035
+   }
+  },
+  {
+   "id": "A05",
+   "name": "顺丰包装",
+   "category": "包装材料",
+   "region": "华中",
+   "kraljic": {
+    "supplyRisk": 0.12,
+    "profitImpact": 0.3
+   },
+   "scores": {
+    "quality": 90,
+    "delivery": 88,
+    "price": 91,
+    "service": 86
+   },
+   "tcoFactors": {
+    "transportRate": 0.032,
+    "qualityLossRate": 0.051,
+    "adminRate": 0.039
+   }
+  },
+  {
+   "id": "A06",
+   "name": "瑞泰电子",
+   "category": "电子元器件",
+   "region": "华南",
+   "kraljic": {
+    "supplyRisk": 0.48,
+    "profitImpact": 0.52
+   },
+   "scores": {
+    "quality": 83,
+    "delivery": 80,
+    "price": 84,
+    "service": 82
+   },
+   "tcoFactors": {
+    "transportRate": 0.063,
+    "qualityLossRate": 0.076,
+    "adminRate": 0.038
+   }
+  },
+  {
+   "id": "A07",
+   "name": "正扬微电子",
+   "category": "电子元器件",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.88,
+    "profitImpact": 0.92
+   },
+   "scores": {
+    "quality": 93,
+    "delivery": 91,
+    "price": 78,
+    "service": 89
+   },
+   "tcoFactors": {
+    "transportRate": 0.079,
+    "qualityLossRate": 0.035,
+    "adminRate": 0.044
+   }
+  },
+  {
+   "id": "A08",
+   "name": "联创包装",
+   "category": "包装材料",
+   "region": "西南",
+   "kraljic": {
+    "supplyRisk": 0.15,
+    "profitImpact": 0.22
+   },
+   "scores": {
+    "quality": 81,
+    "delivery": 85,
+    "price": 88,
+    "service": 84
+   },
+   "tcoFactors": {
+    "transportRate": 0.072,
+    "qualityLossRate": 0.087,
+    "adminRate": 0.025
+   }
+  },
+  {
+   "id": "A09",
+   "name": "宏源五金",
+   "category": "五金标准件",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.22,
+    "profitImpact": 0.2
+   },
+   "scores": {
+    "quality": 88,
+    "delivery": 89,
+    "price": 90,
+    "service": 85
+   },
+   "tcoFactors": {
+    "transportRate": 0.087,
+    "qualityLossRate": 0.062,
+    "adminRate": 0.023
+   }
+  },
+  {
+   "id": "A10",
+   "name": "佳信化工",
+   "category": "化工原料",
+   "region": "华南",
+   "kraljic": {
+    "supplyRisk": 0.42,
+    "profitImpact": 0.4
+   },
+   "scores": {
+    "quality": 79,
+    "delivery": 83,
+    "price": 85,
+    "service": 81
+   },
+   "tcoFactors": {
+    "transportRate": 0.036,
+    "qualityLossRate": 0.109,
+    "adminRate": 0.038
+   }
+  },
+  {
+   "id": "A11",
+   "name": "中天结构件",
+   "category": "结构件",
+   "region": "华北",
+   "kraljic": {
+    "supplyRisk": 0.65,
+    "profitImpact": 0.72
+   },
+   "scores": {
+    "quality": 89,
+    "delivery": 87,
+    "price": 82,
+    "service": 86
+   },
+   "tcoFactors": {
+    "transportRate": 0.078,
+    "qualityLossRate": 0.07,
+    "adminRate": 0.036
+   }
+  },
+  {
+   "id": "A12",
+   "name": "鑫源材料",
+   "category": "化工原料",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.3,
+    "profitImpact": 0.35
+   },
+   "scores": {
+    "quality": 80,
+    "delivery": 84,
+    "price": 58,
+    "service": 78
+   },
+   "tcoFactors": {
+    "transportRate": 0.088,
+    "qualityLossRate": 0.091,
+    "adminRate": 0.037
+   }
+  },
+  {
+   "id": "A13",
+   "name": "德昌电子",
+   "category": "电子元器件",
+   "region": "华南",
+   "kraljic": {
+    "supplyRisk": 0.4,
+    "profitImpact": 0.45
+   },
+   "scores": {
+    "quality": 86,
+    "delivery": 85,
+    "price": 83,
+    "service": 84
+   },
+   "tcoFactors": {
+    "transportRate": 0.08,
+    "qualityLossRate": 0.078,
+    "adminRate": 0.046
+   }
+  },
+  {
+   "id": "A14",
+   "name": "荣达五金",
+   "category": "五金标准件",
+   "region": "西南",
+   "kraljic": {
+    "supplyRisk": 0.1,
+    "profitImpact": 0.15
+   },
+   "scores": {
+    "quality": 84,
+    "delivery": 86,
+    "price": 89,
+    "service": 82
+   },
+   "tcoFactors": {
+    "transportRate": 0.065,
+    "qualityLossRate": 0.087,
+    "adminRate": 0.021
+   }
+  },
+  {
+   "id": "A15",
+   "name": "安捷包装",
+   "category": "包装材料",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.2,
+    "profitImpact": 0.18
+   },
+   "scores": {
+    "quality": 87,
+    "delivery": 84,
+    "price": 90,
+    "service": 88
+   },
+   "tcoFactors": {
+    "transportRate": 0.044,
+    "qualityLossRate": 0.064,
+    "adminRate": 0.022
+   }
+  },
+  {
+   "id": "A16",
+   "name": "华越化工",
+   "category": "化工原料",
+   "region": "华中",
+   "kraljic": {
+    "supplyRisk": 0.38,
+    "profitImpact": 0.44
+   },
+   "scores": {
+    "quality": 82,
+    "delivery": 79,
+    "price": 84,
+    "service": 80
+   },
+   "tcoFactors": {
+    "transportRate": 0.044,
+    "qualityLossRate": 0.076,
+    "adminRate": 0.028
+   }
+  },
+  {
+   "id": "A17",
+   "name": "凯诺电子",
+   "category": "电子元器件",
+   "region": "华北",
+   "kraljic": {
+    "supplyRisk": 0.35,
+    "profitImpact": 0.38
+   },
+   "scores": {
+    "quality": 85,
+    "delivery": 83,
+    "price": 86,
+    "service": 83
+   },
+   "tcoFactors": {
+    "transportRate": 0.068,
+    "qualityLossRate": 0.073,
+    "adminRate": 0.031
+   }
+  },
+  {
+   "id": "A18",
+   "name": "腾飞结构件",
+   "category": "结构件",
+   "region": "华南",
+   "kraljic": {
+    "supplyRisk": 0.28,
+    "profitImpact": 0.5
+   },
+   "scores": {
+    "quality": 84,
+    "delivery": 86,
+    "price": 87,
+    "service": 85
+   },
+   "tcoFactors": {
+    "transportRate": 0.043,
+    "qualityLossRate": 0.074,
+    "adminRate": 0.048
+   }
+  },
+  {
+   "id": "A19",
+   "name": "永泰五金",
+   "category": "五金标准件",
+   "region": "华东",
+   "kraljic": {
+    "supplyRisk": 0.16,
+    "profitImpact": 0.28
+   },
+   "scores": {
+    "quality": 86,
+    "delivery": 88,
+    "price": 85,
+    "service": 87
+   },
+   "tcoFactors": {
+    "transportRate": 0.069,
+    "qualityLossRate": 0.077,
+    "adminRate": 0.025
+   }
+  },
+  {
+   "id": "A20",
+   "name": "嘉合材料",
+   "category": "化工原料",
+   "region": "西南",
+   "kraljic": {
+    "supplyRisk": 0.45,
+    "profitImpact": 0.3
+   },
+   "scores": {
+    "quality": 83,
+    "delivery": 81,
+    "price": 85,
+    "service": 82
+   },
+   "tcoFactors": {
+    "transportRate": 0.074,
+    "qualityLossRate": 0.074,
+    "adminRate": 0.031
+   }
+  }
+ ]
+}
