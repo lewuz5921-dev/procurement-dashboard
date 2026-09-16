@@ -85,6 +85,7 @@ const sortedSuppliers = computed(() => [...suppliers.value].sort((a, b) => b.spe
   <div v-show="ready">
     <div class="page-header">
       <div>
+        <router-link class="back-link" to="/">← 返回总览（下钻页）</router-link>
         <div class="page-title">供应商评估</div>
         <div class="page-desc">基于 Kraljic 矩阵分级（供应风险 × 业务影响），气泡大小 = 年采购额 · 点击气泡查看绩效雷达</div>
       </div>

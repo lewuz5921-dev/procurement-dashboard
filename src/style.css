@@ -28,7 +28,15 @@ a { text-decoration: none; color: inherit; }
 .nav-item { display: block; padding: 10px 12px; border-radius: 8px; color: var(--text-2); margin-bottom: 4px; font-size: 14px; }
 .nav-item:hover { background: var(--bg); color: var(--text); }
 .nav-item.active { background: var(--primary-bg); color: var(--primary); font-weight: 500; }
+.nav-sub { display: block; font-size: 11px; color: var(--text-2); margin-top: 2px; font-weight: 400; }
+.nav-item.active .nav-sub { color: var(--primary); opacity: .75; }
+.nav-note { margin-top: 18px; padding: 10px 12px; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.7; color: var(--text-2); }
+.nav-note-link { color: var(--primary); }
 .main { flex: 1; padding: 24px 28px; min-width: 0; }
+
+/* 下钻页返回入口 */
+.back-link { display: inline-block; font-size: 12px; color: var(--primary); margin-bottom: 6px; cursor: pointer; }
+.back-link:hover { text-decoration: underline; }
 
 /* 通用组件 */
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }

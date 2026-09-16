@@ -1,13 +1,23 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { store, load } from '../data/store'
 import { groupByMonth, fmtPct } from '../utils/metrics'
 import { useChart } from '../utils/useChart'
 
+const route = useRoute()
 const ready = ref(false)
 onMounted(async () => { await load(); ready.value = true })
 
-const supplierFilter = ref('')   // '' = 全部
+// 支持从总览页下钻：/fulfillment?supplier=A01 自动选中该供应商
+const supplierFilter = ref(String(route.query.supplier || ''))
+watch(() => route.query.supplier, v => { supplierFilter.value = String(v || '') })
+
+/** 当前选中的供应商名称（无效 id 时安全降级） */
+const supplierName = computed(() => {
+  const s = store.suppliers.find(x => x.id === supplierFilter.value)
+  return s ? s.name : '全部'
+})
 
 const allOrders = computed(() => store.orders)
 const orders = computed(() =>
@@ -81,8 +91,9 @@ const kpi = computed(() => {
   <div v-show="ready">
     <div class="page-header">
       <div>
+        <router-link class="back-link" to="/">← 返回总览（下钻页）</router-link>
         <div class="page-title">履约监控</div>
-        <div class="page-desc">订单准时交付率（OTD）趋势、延误分布与异常订单预警</div>
+        <div class="page-desc">订单准时交付率（OTD）趋势、延误分布与异常订单预警{{ supplierFilter ? ' · 已下钻至 ' + supplierName : '' }}</div>
       </div>
       <div class="filters">
         <select v-model="supplierFilter">
@@ -110,7 +121,7 @@ const kpi = computed(() => {
       </div>
       <div class="card kpi">
         <div class="kpi-label">供应商切换</div>
-        <div class="kpi-value" style="font-size: 16px; margin-top: 14px">{{ supplierFilter ? store.suppliers.find(s => s.id === supplierFilter).name : '全部' }}</div>
+        <div class="kpi-value" style="font-size: 16px; margin-top: 14px">{{ supplierName }}</div>
         <div class="kpi-delta flat">用于单供应商下钻</div>
       </div>
     </div>

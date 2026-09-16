@@ -6,10 +6,10 @@
 import { otd, categoryPriceStats, supplierPareto, tco } from './metrics'
 
 export const RULES = [
-  { id: 'R1', name: 'OTD 连续下滑', desc: '供应商近 3 个月 OTD 较前 9 个月基线下降超过 20 个百分点' },
-  { id: 'R2', name: '报价离群', desc: '供应商成交均价高于品类均值 2 个标准差以上' },
-  { id: 'R3', name: '单一供应商依赖', desc: '单一供应商占品类采购额超过 60%，存在断供风险' },
-  { id: 'R4', name: '低价高 TCO', desc: '供应商单价低于品类均价 15%，但 TCO 高于品类 TCO 均值' }
+  { id: 'R1', name: 'OTD 连续下滑', short: '履约下滑', desc: '供应商近 3 个月 OTD 较前 9 个月基线下降超过 20 个百分点' },
+  { id: 'R2', name: '报价离群', short: '报价离群', desc: '供应商成交均价高于同品类其他供应商均值 2 个标准差以上（留一法口径，剔除自身样本）' },
+  { id: 'R3', name: '单一供应商依赖', short: '单一依赖', desc: '单一供应商占品类采购额超过 60%，存在断供风险' },
+  { id: 'R4', name: '低价高 TCO', short: '低价高 TCO', desc: '供应商单价低于品类均价 15%，但 TCO 高于品类 TCO 均值' }
 ]
 
 /**
@@ -44,9 +44,13 @@ export function detectOtdDrop(orders, allOrders) {
 
 /**
  * R2: 报价离群检测（品类均值 ± 2σ）
+ *
+ * ⚠️ 口径说明（留一法）：计算品类均值与标准差时必须剔除**候选供应商自身**的订单。
+ * 若把离群供应商自己算进 σ，它会把自己的离群"洗白"——实测鑫源材料（A12）
+ * 在含自身口径下仅 +1.50σ（不触发），改用留一法后为 +2.57σ（触发），
+ * 与 README 记载的 2.6σ 一致。规则代码必须与对外声明的口径严格一致。
  */
 export function detectPriceOutlier(orders) {
-  const stats = categoryPriceStats(orders)
   const bySup = new Map()
   for (const o of orders) {
     if (!bySup.has(o.supplierId)) bySup.set(o.supplierId, { name: o.supplierName, category: o.category, list: [] })
@@ -54,15 +58,20 @@ export function detectPriceOutlier(orders) {
   }
   const results = []
   for (const [sid, { name, category, list }] of bySup) {
-    const st = stats[category]
-    if (!st || list.length < 5) continue
+    if (list.length < 5) continue
+    // 留一法：同品类其他供应商的成交价作为基准样本
+    const others = orders.filter(o => o.category === category && o.supplierId !== sid).map(o => o.unitPrice)
+    if (others.length < 5) continue
+    const mu = others.reduce((a, b) => a + b, 0) / others.length
+    const sd = Math.sqrt(others.reduce((s, p) => s + (p - mu) ** 2, 0) / others.length)
+    if (!sd) continue
     const avg = list.reduce((s, o) => s + o.unitPrice, 0) / list.length
-    const z = (avg - st.mean) / st.sd
+    const z = (avg - mu) / sd
     if (z > 2) {
       results.push({
         rule: 'R2', level: 'medium', supplierId: sid, supplierName: name,
-        detail: `${category}品类均价 ¥${st.mean.toFixed(1)}，该供应商成交均价 ¥${avg.toFixed(1)}（+${z.toFixed(1)}σ）`,
-        attribution: `价格持续高于市场基准，可能存在议价空间不足或隐性成本转嫁。建议：纳入比价清单重新招标，或以量换价谈判阶梯折扣。`
+        detail: `${category}品类其他供应商均价 ¥${mu.toFixed(1)}，该供应商成交均价 ¥${avg.toFixed(1)}（+${z.toFixed(1)}σ，留一法口径）`,
+        attribution: `价格持续高于同品类其他供应商，可能存在议价空间不足或隐性成本转嫁。建议：纳入比价清单重新招标，或以量换价谈判阶梯折扣。`
       })
     }
   }
