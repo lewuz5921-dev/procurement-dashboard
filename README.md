@@ -1,6 +1,6 @@
 # 采购数字化数据看板 · Procurement Dashboard
 
-> 🔗 **在线演示**：https://28be4b6812fa4504a05b91cd73b03cb4.app.workbuddy.link
+> 🔗 **在线演示**：https://procurement-kpi-board-79919.app.workbuddy.host/
 
 ## 关于作者与这个项目（请先读这一节）
 
