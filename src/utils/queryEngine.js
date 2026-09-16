@@ -85,7 +85,7 @@ function qSpend(orders, q) {
   const pareto = supplierPareto(orders)
   const n = q.value ?? 5
   const rows = pareto.slice(0, n).map(p => ({ name: p.name, value: p.amount }))
-  const text = `采购金额最大的 ${rows.length} 家供应商：` + rows.map(r => `${r.name}（¥${fmtMoney(r.value)}）`).join('、')
+  const text = `采购金额最大的 ${rows.length} 家供应商：` + rows.map(r => `${r.name}（${fmtMoney(r.value)}）`).join('、')
   return { text, rows }
 }
 

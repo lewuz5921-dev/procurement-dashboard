@@ -72,6 +72,8 @@ tr:hover td { background: #fafbfc; }
 .tag-danger { background: var(--danger-bg); color: var(--danger); }
 .tag-warning { background: var(--warning-bg); color: var(--warning); }
 .tag-ok { background: var(--success-bg); color: var(--success); }
+.tag-outline { background: #fff; color: var(--text-2); border: 1px solid var(--border); }
+.card-hint { font-weight: 400; font-size: 12px; color: var(--text-2); margin-left: 10px; }
 
 /* 筛选器 */
 .filters { display: flex; gap: 10px; align-items: center; }

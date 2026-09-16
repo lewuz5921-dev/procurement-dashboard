@@ -144,6 +144,8 @@ function goFulfillment(supplierId) {
 const goCost = () => router.push('/cost')
 const goInsight = () => router.push('/insight')
 const goSupplier = () => router.push('/supplier')
+/** OPT-05：一次点击直达口径构成表（迁至智能洞察页内区块） */
+const goBenchmark = () => router.push({ path: '/insight', query: { focus: 'benchmark' } })
 </script>
 
 <template>
@@ -173,7 +175,7 @@ const goSupplier = () => router.push('/supplier')
     <div class="grid grid-4" style="margin-bottom: 16px">
       <div class="card kpi">
         <div class="kpi-label">采购总金额</div>
-        <div class="kpi-value">¥{{ fmtMoney(kpi.total) }}</div>
+        <div class="kpi-value">{{ fmtMoney(kpi.total) }}</div>
         <div class="kpi-delta" :class="kpi.mom >= 0 ? 'up' : 'down'">
           环比 {{ kpi.mom >= 0 ? '+' : '' }}{{ kpi.mom.toFixed(1) }}%
           <span class="kpi-sub">· {{ kpi.count.toLocaleString() }} 单 · {{ store.suppliers.length }} 家供应商</span>
@@ -184,10 +186,7 @@ const goSupplier = () => router.push('/supplier')
         <div class="kpi-label">准时交付率 OTD</div>
         <div class="kpi-value" :class="{ 'val-bad': gap > 0 }">{{ fmtPct(kpi.ot) }}</div>
         <div class="kpi-delta" :class="gap > 0 ? 'up' : 'down'">
-          <template v-if="gap > 0">
-            低于目标 90% 共 {{ gap.toFixed(1) }}pt ｜ 主要拖累：
-            <b>{{ topDrag ? topDrag.supplierName : '—' }}（−{{ topDrag ? topDrag.dragPt.toFixed(1) : '0.0' }}pt）</b>
-          </template>
+          <template v-if="gap > 0">低于目标 90% 共 {{ gap.toFixed(1) }}pt</template>
           <template v-else>达标（目标 90%）</template>
           <span class="drill">查看履约明细 →</span>
         </div>
@@ -196,10 +195,10 @@ const goSupplier = () => router.push('/supplier')
       <div class="card kpi kpi-link" @click="goCost">
         <div class="kpi-label">成本节约（相对基准价）</div>
         <template v-if="kpi.sv.computable">
-          <div class="kpi-value" :class="kpi.sv.savings >= 0 ? 'val-good' : 'val-bad'">¥{{ fmtMoney(kpi.sv.savings) }}</div>
+          <div class="kpi-value" :class="kpi.sv.savings >= 0 ? 'val-good' : 'val-bad'">{{ fmtMoney(kpi.sv.savings) }}</div>
           <div class="kpi-delta flat">
             节约率 <b>{{ fmtPct(kpi.sv.rate, 2) }}</b>（基准覆盖率 {{ fmtPct(kpi.sv.coverage * 100, 1) }}，{{ kpi.sv.uncovered }} 单无基准价未计入）
-            <span class="drill">查看成本分析 →</span>
+            <span class="drill" @click.stop="goBenchmark">口径说明 →</span>
           </div>
         </template>
         <template v-else>
@@ -236,7 +235,7 @@ const goSupplier = () => router.push('/supplier')
             <span class="n">{{ story.lateOrders }}</span><span class="u">单未交付</span>
           </div>
           <div class="story-num">
-            <span class="n">¥{{ fmtMoney(story.impactAmount) }}</span><span class="u">影响金额</span>
+            <span class="n">{{ fmtMoney(story.impactAmount) }}</span><span class="u">影响金额</span>
           </div>
           <div class="story-num">
             <span class="n">{{ story.months }}</span><span class="u">个月统计窗口</span>
@@ -250,40 +249,6 @@ const goSupplier = () => router.push('/supplier')
       <div class="story-right">
         <div class="story-chart-title">{{ story.supplierName }} · 月度 OTD</div>
         <div ref="storyRef" class="story-chart"></div>
-      </div>
-    </div>
-
-    <!-- 节约率口径构成：把口径依据摆出来，便于逐项核对 -->
-    <div class="card">
-      <div class="card-title">
-        成本节约率口径构成（按基准价来源拆解）
-        <span class="card-hint">基准价四级优先取数：年度框架合同价 → 上次成交价（按品类行情折算至本期）→ 当期询价最低有效报价 → 滚动 12 个月成交均价</span>
-      </div>
-      <table>
-        <thead>
-          <tr><th>基准价来源</th><th>口径说明</th><th>订单数</th><th>基准金额</th><th>节约额</th><th>节约率</th></tr>
-        </thead>
-        <tbody>
-          <tr v-for="s in kpi.sv.bySource" :key="s.key">
-            <td><b>{{ s.short }}</b> {{ s.label }}</td>
-            <td class="muted">{{ s.desc }}</td>
-            <td>{{ s.orders }}</td>
-            <td>¥{{ fmtMoney(s.benchmarkTotal) }}</td>
-            <td :class="s.savings >= 0 ? 'pos' : 'neg'">{{ s.savings >= 0 ? '' : '−' }}¥{{ fmtMoney(Math.abs(s.savings)) }}</td>
-            <td :class="s.rate >= 0 ? 'pos' : 'neg'"><b>{{ s.rate >= 0 ? '+' : '' }}{{ s.rate.toFixed(2) }}%</b></td>
-          </tr>
-          <tr class="total-row">
-            <td><b>合计（已覆盖）</b></td>
-            <td class="muted">基准覆盖率 {{ fmtPct(kpi.sv.coverage * 100, 1) }}，{{ kpi.sv.uncovered }} 单无基准价未计入</td>
-            <td>{{ kpi.sv.covered }}</td>
-            <td>¥{{ fmtMoney(kpi.sv.benchmarkTotal) }}</td>
-            <td :class="kpi.sv.savings >= 0 ? 'pos' : 'neg'"><b>{{ kpi.sv.savings >= 0 ? '' : '−' }}¥{{ fmtMoney(Math.abs(kpi.sv.savings)) }}</b></td>
-            <td :class="kpi.sv.rate >= 0 ? 'pos' : 'neg'"><b>{{ kpi.sv.rate >= 0 ? '+' : '' }}{{ kpi.sv.rate.toFixed(2) }}%</b></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="page-desc" style="margin-top: 10px">
-        注：③ 口径为负，即成交价高于当期询价最低有效报价 —— 询价环节仍有下探空间。各来源口径方向不一致时，单一节约率数字不足以反映议价表现。
       </div>
     </div>
 
@@ -336,13 +301,8 @@ const goSupplier = () => router.push('/supplier')
 .story-chart-title { font-size: 12px; color: var(--text-2); margin-bottom: 4px; }
 .story-chart { width: 100%; height: 170px; }
 
-/* 口径构成表 */
 .card-title .card-hint { font-weight: 400; font-size: 12px; color: var(--text-2); margin-left: 10px; }
 .card-hint.link { color: var(--primary); cursor: pointer; }
-.muted { color: var(--text-2); font-size: 12px; }
-.pos { color: var(--success); }
-.neg { color: var(--danger); }
-.total-row td { border-top: 1px solid var(--border); background: #fafbfc; }
 
 @media (max-width: 1100px) {
   .story { grid-template-columns: 1fr; }

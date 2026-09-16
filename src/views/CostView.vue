@@ -155,7 +155,7 @@ const categoryStats = computed(() => {
         <tbody>
           <tr v-for="c in categoryStats" :key="c.cat">
             <td>{{ c.cat }}</td>
-            <td>¥{{ fmtMoney(c.spend) }}</td>
+            <td>{{ fmtMoney(c.spend) }}</td>
             <td>¥{{ c.mean.toFixed(1) }}</td>
             <td>¥{{ c.min.toFixed(1) }}</td>
             <td>¥{{ c.max.toFixed(1) }}</td>

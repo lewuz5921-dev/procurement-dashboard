@@ -3,16 +3,51 @@
  * 职责：把自然语言问题解析为结构化查询参数（Function Calling 强制 schema）
  * 关键设计：LLM 只输出查询参数，不生成答案正文 —— 从架构上杜绝幻觉
  *
- * 降级模式：无 API key 时（公开部署版本），用关键词规则兜底解析，
- * 保证 demo 交互可用，且部署产物中不包含任何密钥。
+ * 密钥策略（BYOK / 自带密钥）：
+ *   构建产物中不含任何密钥。使用者在页面上自行填入自己的 API Key，
+ *   密钥只写入本机 localStorage，请求由浏览器直连使用者自己选择的上游地址。
+ *   未填密钥时自动降级为关键词规则解析 —— 演示功能不受影响。
+ *
+ * 上游地址放在 public/llm-config.json（运行时读取、可编辑），
+ * 目的：JS 分包中不出现任何上游服务域名，且便于切换为自建代理。
  */
 
-const KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || ''
-const ENDPOINT = 'https://api.deepseek.com/chat/completions'
+const KEY_STORE = 'pd.llm.key'
+const BASE_STORE = 'pd.llm.base'
 
-export function hasLLM() {
-  return !!KEY
+/** 运行时读取使用者自己的密钥（不参与构建，不会进入产物） */
+export function getKey() {
+  try { return localStorage.getItem(KEY_STORE) || '' } catch { return '' }
 }
+export function setKey(k) {
+  try { k ? localStorage.setItem(KEY_STORE, k) : localStorage.removeItem(KEY_STORE) } catch { /* 隐私模式下忽略 */ }
+}
+export function hasLLM() {
+  return !!getKey()
+}
+
+/** 上游地址：使用者可覆盖，未设置时回落到 llm-config.json */
+export function getBaseUrl() {
+  try { return localStorage.getItem(BASE_STORE) || '' } catch { return '' }
+}
+export function setBaseUrl(u) {
+  try { u ? localStorage.setItem(BASE_STORE, u) : localStorage.removeItem(BASE_STORE) } catch { /* 同上 */ }
+}
+
+let cfg = { baseUrl: '', model: '' }
+
+/** 运行时拉取上游配置；失败时保持为空（LLM 模式不可用，走规则解析） */
+export async function loadLLMConfig() {
+  try {
+    const res = await fetch('./llm-config.json')
+    if (res.ok) cfg = { baseUrl: '', model: '', ...(await res.json()) }
+  } catch { /* 无配置文件时静默降级 */ }
+  return cfg
+}
+export function defaultBaseUrl() { return cfg.baseUrl }
+export function defaultModel() { return cfg.model }
+/** 当前生效的上游地址（使用者设置优先于默认配置） */
+export function effectiveBaseUrl() { return getBaseUrl() || cfg.baseUrl }
 
 /** 输出契约：LLM 只允许返回这个 schema 的参数 */
 const QUERY_SCHEMA = {
@@ -35,20 +70,22 @@ const SYSTEM_PROMPT =
   '只调用工具，不要输出任何其他文字。如果问题超出采购数据查询范围（如闲聊、知识问答），不要调用工具。'
 
 /**
- * 调用 DeepSeek，把自然语言解析为查询参数
- * @returns {object|null} 查询参数；无法解析/越界时返回 null
+ * 调用上游大模型，把自然语言解析为查询参数
+ * @returns {object|null} 查询参数；无密钥 / 解析失败 / 越界时返回 null
  */
 export async function parseIntent(question) {
-  if (!KEY) return null
+  const key = getKey()
+  const base = effectiveBaseUrl()
+  if (!key || !base) return null
   try {
-    const res = await fetch(ENDPOINT, {
+    const res = await fetch(base, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${KEY}`
+        Authorization: `Bearer ${key}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: cfg.model || undefined,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: question }
@@ -79,7 +116,7 @@ export async function parseIntent(question) {
 }
 
 /* ------------------------------------------------------------------
- * 降级模式：关键词规则解析（无 key 时）
+ * 降级模式：关键词规则解析（无密钥时）
  * ------------------------------------------------------------------ */
 
 const CATEGORIES = ['电子元器件', '结构件', '包装材料', '化工原料', '五金标准件']
@@ -105,8 +142,8 @@ export function fallbackParse(question) {
   const numMatch = q.match(/(\d+(?:\.\d+)?)/)
   const num = numMatch ? parseFloat(numMatch[1]) : 0
 
-  // OTD / 交付 / 准时
-  if (/otd|准时|按时|交付|延期|延误/.test(q)) {
+  // OTD / 交付 / 准时（大小写不敏感：示例问题里写的是大写 OTD）
+  if (/otd|准时|按时|交付|延期|延误/i.test(q)) {
     const op = /低于|不足|小于|差于|下降/.test(q) ? '<' : /高于|超过|大于/.test(q) ? '>' : 'top_n'
     return { target: 'supplier', metric: 'otd', operator: op, value: op === 'top_n' ? 5 : (num || 80), time }
   }
@@ -125,7 +162,7 @@ export function fallbackParse(question) {
     return { target: 'category', metric: 'concentration', operator: 'top_n', value: 1, time }
   }
   // TCO / 全生命周期成本
-  if (/tco|全生命周期|总成本|总拥有成本/.test(q)) {
+  if (/tco|全生命周期|总成本|总拥有成本/i.test(q)) {
     return { target: 'supplier', metric: 'tco', operator: 'top_n', value: 1, time }
   }
   // 价格趋势 / 涨幅

@@ -7,7 +7,8 @@ const PAGES = [
   ['fulfillment', 'http://localhost:4173/#/fulfillment'],
   ['fulfillment-drill', 'http://localhost:4173/#/fulfillment?supplier=A01'],
   ['cost', 'http://localhost:4173/#/cost'],
-  ['insight', 'http://localhost:4173/#/insight']
+  ['insight', 'http://localhost:4173/#/insight'],
+  ['query', 'http://localhost:4173/#/query']
 ]
 
 ;(async () => {

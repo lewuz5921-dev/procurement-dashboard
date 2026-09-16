@@ -1,0 +1,5 @@
+{
+  "_说明": "上游大模型服务的默认地址。运行时读取，不参与编译，可自由修改为自建代理地址。若置空，使用者必须在页面设置里自行填写地址后才能启用 LLM 模式。",
+  "baseUrl": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-chat"
+}

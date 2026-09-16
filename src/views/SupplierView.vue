@@ -38,7 +38,7 @@ useChart(kraljicRef, () => ({
   tooltip: {
     formatter: p => {
       const s = suppliers.value.find(x => x.id === p.data[2])
-      return s ? `<b>${s.name}</b><br/>供应风险 ${s.kraljic.supplyRisk.toFixed(2)}<br/>业务影响 ${s.kraljic.profitImpact.toFixed(2)}<br/>年采购额 ¥${fmtMoney(s.spend)}<br/>${s.tier.label}供应商` : ''
+      return s ? `<b>${s.name}</b><br/>供应风险 ${s.kraljic.supplyRisk.toFixed(2)}<br/>业务影响 ${s.kraljic.profitImpact.toFixed(2)}<br/>年采购额 ${fmtMoney(s.spend)}<br/>${s.tier.label}供应商` : ''
     }
   },
   xAxis: { name: '供应风险 →', nameLocation: 'middle', nameGap: 28, min: 0, max: 1, splitLine: { show: false } },
@@ -120,7 +120,7 @@ const sortedSuppliers = computed(() => [...suppliers.value].sort((a, b) => b.spe
                 <td>{{ s.name }}</td>
                 <td>{{ s.category }}</td>
                 <td><span class="tag" :class="'tag-' + s.tier.key">{{ s.tier.label }}</span></td>
-                <td>¥{{ fmtMoney(s.spend) }}</td>
+                <td>{{ fmtMoney(s.spend) }}</td>
                 <td><a href="javascript:;" style="color: var(--primary)" @click="selected = s">雷达</a></td>
               </tr>
             </tbody>

@@ -3,12 +3,9 @@
  * 每个指标的计算公式见 README「指标口径表」
  */
 
-/** 数值格式化 */
-export function fmtMoney(v) {
-  if (v >= 1e8) return (v / 1e8).toFixed(2) + ' 亿'
-  if (v >= 1e4) return (v / 1e4).toFixed(1) + ' 万'
-  return Math.round(v).toLocaleString('zh-CN')
-}
+/** 数值格式化（统一由 utils/format.js 提供，页面不得自行 toFixed） */
+import { fmtMoney, fmtMoneyWan, fmtWan } from './format'
+export { fmtMoney, fmtMoneyWan, fmtWan }
 export function fmtPct(v, digits = 1) { return v.toFixed(digits) + '%' }
 
 /** 按月聚合 */
