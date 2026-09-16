@@ -103,7 +103,7 @@ const categoryStats = computed(() => {
   <div v-show="ready">
     <div class="page-header">
       <div>
-        <router-link class="back-link" to="/">← 返回总览（下钻页）</router-link>
+        <router-link class="back-link" to="/">← 返回总览</router-link>
         <div class="page-title">成本分析 · TCO 全生命周期成本</div>
         <div class="page-desc">TCO = 成交均价 × (1 + 运输费率 + 质量损失率 + 管理费率) —— 打破“单价最低”直觉</div>
       </div>

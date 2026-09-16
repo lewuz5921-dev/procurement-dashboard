@@ -27,9 +27,6 @@ const active = computed(() => route.path)
         <span>{{ n.label }}</span>
         <span class="nav-sub">{{ n.sub }}</span>
       </router-link>
-      <div class="nav-note">
-        履约 / 成本 / 供应商评估已改为从<router-link to="/" class="nav-note-link">总览</router-link>下钻进入
-      </div>
     </aside>
     <main class="main">
       <router-view />

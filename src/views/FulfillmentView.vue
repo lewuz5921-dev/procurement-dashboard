@@ -24,6 +24,13 @@ const orders = computed(() =>
   supplierFilter.value ? allOrders.value.filter(o => o.supplierId === supplierFilter.value) : allOrders.value
 )
 
+/** 当前筛选范围的订单规模（KPI 卡脚注：单数 + 占全量比例） */
+const scopeText = computed(() => {
+  const n = orders.value.length
+  const all = allOrders.value.length
+  return all ? `${n} 单 · 占全量 ${(100 * n / all).toFixed(1)}%` : `${n} 单`
+})
+
 const monthly = computed(() => groupByMonth(orders.value))
 
 /** 异常订单：逾期交付 且 延误超过7天 */
@@ -91,9 +98,9 @@ const kpi = computed(() => {
   <div v-show="ready">
     <div class="page-header">
       <div>
-        <router-link class="back-link" to="/">← 返回总览（下钻页）</router-link>
+        <router-link class="back-link" to="/">← 返回总览</router-link>
         <div class="page-title">履约监控</div>
-        <div class="page-desc">订单准时交付率（OTD）趋势、延误分布与异常订单预警{{ supplierFilter ? ' · 已下钻至 ' + supplierName : '' }}</div>
+        <div class="page-desc">订单准时交付率（OTD）趋势、延误分布与异常订单预警{{ supplierFilter ? ' · 当前供应商：' + supplierName : '' }}</div>
       </div>
       <div class="filters">
         <select v-model="supplierFilter">
@@ -120,9 +127,9 @@ const kpi = computed(() => {
         <div class="kpi-delta flat">按延误订单加权</div>
       </div>
       <div class="card kpi">
-        <div class="kpi-label">供应商切换</div>
+        <div class="kpi-label">当前供应商</div>
         <div class="kpi-value" style="font-size: 16px; margin-top: 14px">{{ supplierName }}</div>
-        <div class="kpi-delta flat">用于单供应商下钻</div>
+        <div class="kpi-delta flat">{{ scopeText }}</div>
       </div>
     </div>
 

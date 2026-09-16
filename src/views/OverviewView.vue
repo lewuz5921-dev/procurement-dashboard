@@ -194,7 +194,7 @@ const goSupplier = () => router.push('/supplier')
       </div>
 
       <div class="card kpi kpi-link" @click="goCost">
-        <div class="kpi-label">成本节约（相对基准价 v2）</div>
+        <div class="kpi-label">成本节约（相对基准价）</div>
         <template v-if="kpi.sv.computable">
           <div class="kpi-value" :class="kpi.sv.savings >= 0 ? 'val-good' : 'val-bad'">¥{{ fmtMoney(kpi.sv.savings) }}</div>
           <div class="kpi-delta flat">
@@ -253,11 +253,11 @@ const goSupplier = () => router.push('/supplier')
       </div>
     </div>
 
-    <!-- 节约率口径构成：把「我凭什么这么算」摆在第一屏 -->
+    <!-- 节约率口径构成：把口径依据摆出来，便于逐项核对 -->
     <div class="card">
       <div class="card-title">
-        成本节约率口径构成（v2 · 按基准价来源拆解）
-        <span class="card-hint">v1 口径用品类均价当基准，代数上恒等于 0，已废弃 —— 修订过程见 README「口径 revision」</span>
+        成本节约率口径构成（按基准价来源拆解）
+        <span class="card-hint">基准价四级优先取数：年度框架合同价 → 上次成交价（按品类行情折算至本期）→ 当期询价最低有效报价 → 滚动 12 个月成交均价</span>
       </div>
       <table>
         <thead>
@@ -283,7 +283,7 @@ const goSupplier = () => router.push('/supplier')
         </tbody>
       </table>
       <div class="page-desc" style="margin-top: 10px">
-        注意 ③ 口径为负：成交价高于当期最低有效报价 —— 说明询价环节仍有下探空间；这正是「单一节约率数字」藏不住、必须拆开看的原因。
+        注：③ 口径为负，即成交价高于当期询价最低有效报价 —— 询价环节仍有下探空间。各来源口径方向不一致时，单一节约率数字不足以反映议价表现。
       </div>
     </div>
 
